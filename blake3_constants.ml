@@ -22,18 +22,3 @@ let c =
     0x0801f2e2858efc16L; 0x636920d871574e69L; ]
     
 let rotate_right x n = Int64.shift_right_logical x n lor Int64.shift_left x (64 - n)
-
-let g s a b c d x y z =
-  let a = a + s.(x) + s.(y) in
-  let c = c lxor a in
-  let c = rotate_right c 32 in
-  let b = b + c in
-  let d = d lxor b in
-  let d = rotate_right d 24 in
-  let a = a + s.(z) in
-  let c = c lxor a in
-  let c = rotate_right c 16 in
-  let b = b + c in
-  let d = d lxor b in
-  let d = rotate_right d 63 in
-  a, b, c, d
