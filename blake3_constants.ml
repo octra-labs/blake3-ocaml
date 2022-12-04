@@ -21,4 +21,4 @@ let c =
     0xba7c9045f12c7f99L; 0x24a19947b3916cf7L; 
     0x0801f2e2858efc16L; 0x636920d871574e69L; ]
     
-let rotate_right x n = Int64.shift_right_logical x n lor Int64.shift_left x (64 - n)
+let rotate_right x n = Int64.shift_right_logical x (Int32.of_int n) lor Int64.shift_left x (64 - n)
