@@ -1,3 +1,6 @@
+open Blake3_constants
+open Blake3_mix
+
 let compress state message =
   let s = Array.make 16 0L in
   for i = 0 to 7 do
