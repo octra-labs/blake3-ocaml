@@ -62,3 +62,12 @@ let increment c y =
       c.current_state <- state_table.(c.current_state).next_state_one_with_increment
     else
       c.current_state <- state_table.(c.current_state).next_state_one
+
+let mix_vectors v1 v2 =
+  let n = Array.length v1 in
+  let result = Array.make n 0 in
+  for i = 0 to n - 1 do
+    result.(i) <- if v1.(i) = v2.(i) then v1.(i) else 1
+  done;
+  result
+;;
