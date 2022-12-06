@@ -19,3 +19,46 @@ let g s a b c d e f g h =
   let b = b lxor c in
   let b = b lsr 63 in
   (a, b, c, d)
+
+
+
+(* A Counter is a data structure that tracks the number of 0 and 1 bits in a given context. *)
+type t = {
+  mutable current_state: int;
+}
+
+type state = {
+  count_zero: int;
+  count_one: int;
+  next_state_zero: int;
+  next_state_one: int;
+  next_state_zero_with_increment: int;
+  next_state_one_with_increment: int;
+  probability_zero: float;
+  probability_one: float;
+}
+
+let state_table =
+  [
+  
+  ]
+
+let create () = {
+  current_state = 0;
+}
+
+let get_zero c =
+  state_table.(c.current_state).count_zero
+
+let get_one c =
+  state_table.(c.current_state).count_one
+
+let priority c =
+  get_zero c + get_one c
+
+let increment c y =
+  if y then
+    if c.current_state < 208 || Random.float 1.0 < state_table.(c.current_state).probability_one then
+      c.current_state <- state_table.(c.current_state).next_state_one_with_increment
+    else
+      c.current_state <- state_table.(c.current_state).next_state_one
