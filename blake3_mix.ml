@@ -62,6 +62,21 @@ let increment c y =
       c.current_state <- state_table.(c.current_state).next_state_one_with_increment
     else
       c.current_state <- state_table.(c.current_state).next_state_one
+      
+      
+let create_state_machine () =
+  let matrix = Array.make_matrix 256 256 1 in
+  let update line =
+    let new_line = Array.make 256 0 in
+    for i = 0 to 255 do
+      new_line.(i) <- (line.(i) + line.((i + 1) mod 256)) mod 256
+    done;
+    new_line
+  in
+  for i = 0 to 255 do
+    matrix.(i) <- update matrix.(i)
+  done;
+
 
 let mix_vectors v1 v2 =
   let n = Array.length v1 in
