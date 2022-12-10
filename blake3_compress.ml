@@ -34,3 +34,29 @@ let compress state message =
   for i = 0 to 7 do
     state.(i) <- state.(i) lxor s.(i) lxor s.(i+8)
   done
+  
+  let gso (v : float array) : float array =
+  let n = Array.length v in
+  let u = Array.copy v in
+  for i = 0 to n - 1 do
+    for j = 0 to i - 1 do
+      let dot_product = ref 0.0 in
+      for k = 0 to n - 1 do
+        dot_product := !dot_product +. u.(k) *. v.(k)
+      done;
+      let scale_factor = !dot_product /. (u.(i) *. u.(i)) in
+      for k = 0 to n - 1 do
+        v.(k) := v.(k) -. scale_factor *. u.(k)
+      done
+    done;
+    let norm = ref 0.0 in
+    for k = 0 to n - 1 do
+      norm := !norm +. v.(k) *. v.(k)
+    done;
+    let scale_factor = sqrt(!norm) in
+    for k = 0 to n - 1 do
+      u.(k) := v.(k) /. scale_factor
+    done
+  done;
+  u
+
