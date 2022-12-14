@@ -77,6 +77,14 @@ let create_state_machine () =
     matrix.(i) <- update matrix.(i)
   done;
 
+let orthogonalize vector =
+  let n = Array.length vector in
+  for i = 0 to n - 1 do
+    for j = 0 to i - 1 do
+      if vector.(j) = vector.(i) then vector.(i) <- 1
+    done;
+  done;
+  vector
 
 let mix_vectors v1 v2 =
   let n = Array.length v1 in
