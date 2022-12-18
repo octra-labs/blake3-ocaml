@@ -71,3 +71,7 @@ let round_fn state msg round =
   g state 2 7 8 13 msg.(schedule.(12)) msg.(schedule.(13));
   g state 3 4 9 14 msg.(schedule.(14)) msg.(schedule.(15))
 
+let load32 src =
+  let p = src in
+  (p.(0) lsl 0) lor (p.(1) lsl 8) lor (p.(2) lsl 16) lor (p.(3) lsl 24)
+
