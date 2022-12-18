@@ -47,10 +47,18 @@ let msg_schedule =
   |]
 
 
-(* 
 exception Invalid_shift of int32
 
 let rotr32 (w: int32) (c: int32) : int32 =
   if c > 32l then raise (Invalid_shift c)
   else Int32.logor (Int32.shift_right w c) (Int32.shift_left w (32 - (Int32.to_int c)))
-*)
+
+let g (state: int32 array) (a: int) (b: int) (c: int) (d: int) (x: int32) (y: int32) : unit =
+  state.(a) <- Int32.add state.(a) (Int32.add state.(b) x);
+  state.(d) <- rotr32 (Int32.logxor state.(d) state.(a)) 16l;
+  state.(c) <- Int32.add state.(c) state.(d);
+  state.(b) <- rotr32 (Int32.logxor state.(b) state.(c)) 12l;
+  state.(a) <- Int32.add state.(a) (Int32.add state.(b) y);
+  state.(d) <- rotr32 (Int32.logxor state.(d) state.(a)) 8l;
+  state.(c) <- Int32.add state.(c) state.(d);
+  state.(b) <- rotr32 (Int32.logxor state.(b) state.(c)) 7l
