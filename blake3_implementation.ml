@@ -45,3 +45,12 @@ let msg_schedule =
     [| 9; 14; 11; 5; 8; 12; 15; 1; 13; 3; 0; 10; 2; 6; 4; 7 |];
     [| 11; 15; 5; 0; 1; 9; 8; 6; 14; 10; 2; 12; 3; 4; 7; 13 |]
   |]
+
+
+(* 
+exception Invalid_shift of int32
+
+let rotr32 (w: int32) (c: int32) : int32 =
+  if c > 32l then raise (Invalid_shift c)
+  else Int32.logor (Int32.shift_right w c) (Int32.shift_left w (32 - (Int32.to_int c)))
+*)
