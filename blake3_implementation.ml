@@ -85,6 +85,21 @@ let compress_pre state cv block block_len counter flags =
   state.(15) <- flags;
 
 
+let hash_one_portable input blocks key counter flags flags_start flags_end out =
+  let cv = Array.make 8 0 in
+  Array.blit key 0 cv 0 (Array.length key);
+  let block_flags = flags lor flags_start in
+  let rec loop blocks =
+    if blocks > 0 then
+      if blocks = 1 then
+        loop (blocks - 1) (block_flags lor flags_end)
+      else
+        loop (blocks - 1) block_flags
+  in
+  loop blocks;
+  store_cv_words out cv
+
+
 let blake3_hash_many_portable (inputs : bytes array) (num_inputs : int) (blocks : int) (key : int32 array) (counter : int64) (increment_counter : bool) (flags : int) (flags_start : int) (flags_end : int) (out : bytes) =
   let rec loop i =
     if i = num_inputs then ()
