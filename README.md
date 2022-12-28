@@ -2,7 +2,7 @@
 ### An implementation of the BLAKE3 cryptographic hash function.
 
 > Note: This repository is currently experimental and is not intended for use. As soon as we finish our work on implementing blake3 on OCaml, we will announce it here.
->You can test it on strings beforehand. For example, you can take the string "hello, world!" as an example. We are actively working on implementing the BLAKE algorithm and will soon be finished.
+>You can test it on strings beforehand. You can take the string "hello, world!" as an example. We are actively working on implementing the BLAKE algorithm and will soon be finished.
 >1.  Convert the string "hello, world!" into a sequence of bytes. You can do this by using a function like `String.to_seq` or `String.to_bytes` in OCaml, or by using a function like `bytes` in Python.
 >2.  Pad the resulting byte sequence to a multiple of the block size (64 bytes). You can do this by adding zero or more bytes to the end of the byte sequence until it is a multiple of the block size.
 >3.  Divide the padded byte sequence into blocks of 64 bytes each.
