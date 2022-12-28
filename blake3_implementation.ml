@@ -85,6 +85,39 @@ let compress_pre state cv block block_len counter flags =
   state.(15) <- flags;
 
 
+let blake3_compress_in_place_portable (cv : int32 array) (block : char array) (block_len : int) (counter : int64) (flags : int) : unit =
+  let state = Array.make 16 0l in
+  compress_pre state cv block block_len counter flags;
+  cv.(0) <- Int32.logxor state.(0) state.(8);
+  cv.(1) <- Int32.logxor state.(1) state.(9);
+  cv.(2) <- Int32.logxor state.(2) state.(10);
+  cv.(3) <- Int32.logxor state.(3) state.(11);
+  cv.(4) <- Int32.logxor state.(4) state.(12);
+  cv.(5) <- Int32.logxor state.(5) state.(13);
+  cv.(6) <- Int32.logxor state.(6) state.(14);
+  cv.(7) <- Int32.logxor state.(7) state.(15)
+
+let blake3_compress_xof_portable (cv : int32 array) (block : char array) (block_len : int) (counter : int64) (flags : int) (out : char array) : unit =
+  let state = Array.make 16 0l in
+  compress_pre state cv block block_len counter flags;
+  store32 (out, 0 * 4) (Int32.logxor state.(0) state.(8));
+  store32 (out, 1 * 4) (Int32.logxor state.(1) state.(9));
+  store32 (out, 2 * 4) (Int32.logxor state.(2) state.(10));
+  store32 (out, 3 * 4) (Int32.logxor state.(3) state.(11));
+  store32 (out, 4 * 4) (Int32.logxor state.(4) state.(12));
+  store32 (out, 5 * 4) (Int32.logxor state.(5) state.(13));
+  store32 (out, 6 * 4) (Int32.logxor state.(6) state.(14));
+  store32 (out, 7 * 4) (Int32.logxor state.(7) state.(15));
+  store32 (out, 8 * 4) (Int32.logxor state.(8) cv.(0));
+  store32 (out, 9 * 4) (Int32.logxor state.(9) cv.(1));
+  store32 (out, 10 * 4) (Int32.logxor state.(10) cv.(2));
+  store32 (out, 11 * 4) (Int32.logxor state.(11) cv.(3));
+  store32 (out, 12 * 4) (Int32.logxor state.(12) cv.(4));
+  store32 (out, 13 * 4) (Int32.logxor state.(13) cv.(5));
+  store32 (out, 14 * 4) (Int32.logxor state.(14) cv.(6));
+  store32 (out, 15 * 4) (Int32.logxor state.(15) cv.(7))
+
+
 let hash_one_portable input blocks key counter flags flags_start flags_end out =
   let cv = Array.make 8 0 in
   Array.blit key 0 cv 0 (Array.length key);
