@@ -75,15 +75,17 @@ let round_fn state msg round =
   g state 2 7 8 13 msg.(schedule.(12)) msg.(schedule.(13));
   g state 3 4 9 14 msg.(schedule.(14)) msg.(schedule.(15)) 
                                                          
-let compress_pre state cv block block_len counter flags =
-  let block_words = Array.init 16 (fun i ->
-      let offset = 4 * i in
-      load32 block.(offset)) in
-  Array.blit cv 0 state 0 8;
-  Array.blit iv 0 state 8 4; 
-  state.(14) <- block_len;
-  state.(15) <- flags;
-
+let compress_pre (state: int32 array) (cv: int32 array) (block: int8 array) (block_len: int8) (counter: int64) (flags: int8) = 
+    let block_words = Array.init 16 (fun i -> Int32.of_int (Int32.of_bytes (Array.sub block (i * 4) 4))) in
+    Array.iteri (fun i x -> state.(i) <- x) cv;
+    Array.iteri (fun i x -> state.(i + 8) <- x) IV;
+    state.(12) <- Int32.of_int64 (Int64.to_int32 counter);
+    state.(13) <- Int32.of_int64 (Int64.to_int32 (Int64.shift_right_logical counter 32));
+    state.(14) <- (Int32.of_int block_len);
+    state.(15) <- (Int32.of_int flags);
+    for i = 0 to 6 do
+        round_fn state block_words i
+    done
 
 let blake3_compress_in_place_portable (cv : int32 array) (block : char array) (block_len : int) (counter : int64) (flags : int) : unit =
   let state = Array.make 16 0l in
