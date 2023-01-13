@@ -48,3 +48,20 @@ let chunk_state_fill_buf (self: blake3_chunk_state) (input: bytes) (input_len: i
 
 let chunk_state_maybe_start_flag (self: blake3_chunk_state) : int =
   if self.blocks_compressed = 0 then chunk_start else 0
+    
+type output_t = {
+  input_cv: int32 array;
+  mutable counter: int64;
+  block: bytes;
+  mutable block_len: int;
+  mutable flags: int;
+}
+
+let make_output (input_cv: int32 array) (block: bytes) (block_len: int) (counter: int64) (flags: int) =
+  let ret = { input_cv = Array.make 8 0l; counter = 0L; block = Bytes.make blake3_block_len '\x00'; block_len = 0; flags = 0; } in
+  Array.blit input_cv 0 ret.input_cv 0 blake3_key_len;
+  Bytes.blit block 0 ret.block 0 blake3_block_len;
+  ret.block_len <- block_len;
+  ret.counter <- counter;
+  ret.flags <- flags;
+  ret
