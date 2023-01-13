@@ -65,3 +65,15 @@ let make_output (input_cv: int32 array) (block: bytes) (block_len: int) (counter
   ret.counter <- counter;
   ret.flags <- flags;
   ret
+  
+(* new !*)
+
+let chunk_state_update (self: blake3_chunk_state) (input: bytes) (input_len: int) =
+  if self.buf_len > 0 then
+    let take = chunk_state_fill_buf self input input_len in
+    input_len <- input_len - take;
+    if input_len > 0 then
+      blake3_compress_in_place self.cv self.buf blake3_block_len self.chunk_counter (self.flags lor (chunk_state_maybe_start_flag self));
+    self.blocks_compressed <- self.blocks_compressed + 1;
+    self.buf_len <- 0;
+    self.buf <- Bytes.make blake3_block_len '\x00'
