@@ -145,3 +145,31 @@ let blake3_hash_many_portable (inputs : bytes array) (num_inputs : int) (blocks 
     )
   in
   loop 0
+
+let counter_low (counter:int64) : int32 = Int32.of_int (Int64.to_int counter)
+
+let counter_high (counter:int64) : int32 = Int32.of_int (Int64.to_int (Int64.shift_right_logical counter 32))
+
+let load32 (src:bytes) : int32 =
+  let p = src in
+  Int32.logor (Int32.shift_left (Int32.of_int (Char.code p.[0])) 0)
+    (Int32.logor (Int32.shift_left (Int32.of_int (Char.code p.[1])) 8)
+       (Int32.logor (Int32.shift_left (Int32.of_int (Char.code p.[2])) 16)
+          (Int32.shift_left (Int32.of_int (Char.code p.[3])) 24)))
+
+let load_key_words (key:bytes) (key_words:int32 array) : unit =
+  key_words.(0) <- load32 (Bytes.sub key 0 4);
+  key_words.(1) <- load32 (Bytes.sub key 4 4);
+  key_words.(2) <- load32 (Bytes.sub key 8 4);
+  key_words.(3) <- load32 (Bytes.sub key 12 4);
+  key_words.(4) <- load32 (Bytes.sub key 16 4);
+  key_words.(5) <- load32 (Bytes.sub key 20 4);
+  key_words.(6) <- load32 (Bytes.sub key 24 4);
+  key_words.(7) <- load32 (Bytes.sub key 28 4)
+
+let store32 (dst:bytes) (w:int32) : unit =
+  let p = dst in
+  p.[0] <- Char.chr (Int32.to_int (Int32.shift_right_logical w 0));
+  p.[1] <- Char.chr (Int32.to_int (Int32.shift_right_logical w 8));
+  p.[2] <- Char.chr (Int32.to_int (Int32.shift_right_logical w 16));
+  p.[3] <- Char.chr (Int32.to_int (Int32.shift_right_logical w 24))
