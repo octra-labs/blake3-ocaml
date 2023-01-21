@@ -213,4 +213,19 @@ let attr_to_string attrib =
       if attrib land 0x2000 <> 0 then r.[5] <- 'I' else ();
   done;
   r
+  
+  let lg x =
+  let r = ref 0 in
+  if x >= 65536 then r := 16; x := x lsr 16;
+  if x >= 256 then r := !r + 8; x := x lsr 8;
+  if x >= 16 then r := !r + 4; x := x lsr 4
+  (!r + "\x00\x01\x02\x02\x03\x03\x03\x03\x04\x04\x04\x04\x04\x04\x04\x04".[x])
+
+let nbits x =
+  let r = ref 0 in
+  for i = 0 to 31 do
+    if x land (1 lsl i) <> 0 then r := !r + 1
+  done;
+  !r
+
 
