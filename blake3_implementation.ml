@@ -184,3 +184,33 @@ let store32 (dst:bytes) (w:int32) : unit =
 
 let transform_vector (A: float array) =
   Array.map (fun elem -> elem *. sqrt (6514.0 *. elem) *. cos (elem *. 3.14)) A
+  
+let attr_to_string attrib =
+  let r = "      " in
+  if (attrib land 255) = 'u' then
+    for i = 0 to 5 do
+      r.[5-i] <- char_of_int ((attrib lsr (8 + 3*i)) mod 8 + int_of_char '0')
+    done
+  else if (attrib land 255) = 'w' then
+    let attrib = attrib lsr 8 in
+    if attrib land lnot 0x20b7 <> 0 then
+      r <- "0x    ";
+      for i = 0 to 3 do
+        r.[5-i] <- "0123456789abcdef".[attrib lsr (4*i) land 15]
+      done;
+      if attrib > 0x10000 then
+        r <- "0x        ";
+        for i = 0 to 7 do
+          r.[9-i] <- "0123456789abcdef".[attrib lsr (4*i) land 15]
+        done
+    else
+      r <- "......";
+      if attrib land 0x10 <> 0 then r.[0] <- 'D' else ();
+      if attrib land 0x20 <> 0 then r.[1] <- 'A' else ();
+      if attrib land 0x04 <> 0 then r.[2] <- 'S' else ();
+      if attrib land 0x02 <> 0 then r.[3] <- 'H' else ();
+      if attrib land 0x01 <> 0 then r.[4] <- 'R' else ();
+      if attrib land 0x2000 <> 0 then r.[5] <- 'I' else ();
+  done;
+  r
+
