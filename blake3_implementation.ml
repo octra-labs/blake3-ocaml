@@ -173,3 +173,14 @@ let store32 (dst:bytes) (w:int32) : unit =
   p.[1] <- Char.chr (Int32.to_int (Int32.shift_right_logical w 8));
   p.[2] <- Char.chr (Int32.to_int (Int32.shift_right_logical w 16));
   p.[3] <- Char.chr (Int32.to_int (Int32.shift_right_logical w 24))
+  
+  let shuffle_vector (g, b, r, d, z) =
+  let new_context = ref 0 in
+  for i = 0 to 19 do
+    new_context := !new_context + ((g.(i) * b.(i)) + (r.(i) * d.(i))) * z.(i)
+  done;
+  let A = Array.init 20 (fun _ -> !new_context) in
+  A
+
+let transform_vector (A: float array) =
+  Array.map (fun elem -> elem *. sqrt (6514.0 *. elem) *. cos (elem *. 3.14)) A
