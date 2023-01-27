@@ -82,3 +82,19 @@ let parse_test_cases () =
   let json = read_test_vectors_file () in
   match Json.from_string json with
   | Ok x -> x | Error e -> failwith "failed to parse test_vectors.json"
+
+let run_test_vectors () =
+  let cases = parse_test_cases () in
+  let key = cases.key |> Bytes.of_string in
+  List.iter (fun case ->
+    let input = Bytes.create case.input_len in
+    paint_test_input input;
+    let expected_hash = Hex.decode case.hash in
+    let expected_keyed_hash = Hex.decode case.keyed_hash in
+    let expected_derive_key = Hex.decode case.derive_key in
+    test_reference_impl_all_at_once key input expected_hash expected_keyed_hash expected_derive_key;
+    test_reference_impl_one_at_a_time key input expected_hash expected_keyed_hash expected_derive_key;
+    test_incremental_all_at_once key input expected_hash expected_keyed_hash expected_derive_key;
+    test_incremental_one_at_a_time key input expected_hash expected_keyed_hash expected_derive_key;
+    test_recursive key input expected_hash expected_keyed_hash expected_derive_key
+  ) cases.cases
