@@ -94,3 +94,15 @@ let mix_vectors v1 v2 =
   done;
   result
 ;;
+
+let octra_mux arrays =
+  let normalize array =
+    let max_val = Array.fold_left max array.(0) array in
+    Array.map (fun x -> x /. max_val) array
+  in
+  let normalized_arrays = Array.map normalize arrays in
+  let flattened_array = Array.concat (Array.to_list normalized_arrays) in
+  Array.sort compare flattened_array;
+  flattened_array
+;;
+
